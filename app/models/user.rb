@@ -14,9 +14,8 @@ class User < ApplicationRecord
   has_many :followers, through: :reverse_of_relationships, source: :follower
 
 
-
-  validates :name, length: { minimum: 2, maximum: 20 }, uniqueness: :true
-  validates :introduction, length: { maximum: 50 }
+  validates :name, length:{ in:2..20},uniqueness: :user
+  validates :introduction, length: {maximum: 50}
 
   def get_profile_image(width, height)
      unless profile_image.attached?
@@ -37,6 +36,20 @@ class User < ApplicationRecord
 
   def following?(user)
     followings.include?(user)
+  end
+  
+  def self.looks(search, word)
+    if search == "perfect_match"
+      @user = User.where("name LIKE?", "#{word}")
+    elsif search == "forward_match"
+      @user = User.where("name LIKE?","#{word}%")
+    elsif search == "backward_match"
+      @user = User.where("name LIKE?","%#{word}")
+    elsif search == "partial_match"
+      @user = User.where("name LIKE?","%#{word}%")
+    else
+      @user = User.all
+    end
   end
 
 end
