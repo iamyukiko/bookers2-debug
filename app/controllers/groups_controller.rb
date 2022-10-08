@@ -11,9 +11,8 @@ class GroupsController < ApplicationController
      @group.owner_id = current_user.id
      if @group.save
      @group.users << current_user
-       redirect_to groups_path, notice: "You have created book successfully."
+       redirect_to groups_path, notice: "You have created group successfully."
      else
-       @groups = Group.all
        render 'new'
      end
    end
@@ -21,13 +20,13 @@ class GroupsController < ApplicationController
    def join
      @group = Group.find(params[:group_id])
      @group.users << current_user
-     redirect_to groups_path
+     redirect_to request.referer
    end
 
    def destroy
      @group = Group.find(params[:id])
      @group.users.delete(current_user)
-     redirect_to groups_path
+     redirect_to request.referer
    end
 
    def index
