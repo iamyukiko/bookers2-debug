@@ -10,11 +10,24 @@ class GroupsController < ApplicationController
      @group = Group.new(group_params)
      @group.owner_id = current_user.id
      if @group.save
+     @group.users << current_user
        redirect_to groups_path, notice: "You have created book successfully."
      else
        @groups = Group.all
        render 'new'
      end
+   end
+
+   def join
+     @group = Group.find(params[:group_id])
+     @group.users << current_user
+     redirect_to groups_path
+   end
+
+   def destroy
+     @group = Group.find(params[:id])
+     @group.users.delete(current_user)
+     redirect_to groups_path
    end
 
    def index
@@ -34,6 +47,10 @@ class GroupsController < ApplicationController
      end
    end
 
+   def show
+     @book = Book.new
+     @group = Group.find(params[:id])
+   end
 
    private
 
